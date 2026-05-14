@@ -77,7 +77,52 @@ router.get('/seed', async (req, res) => {
       );
     }
 
-    res.json({ message: '✅ Tables created AND users seeded successfully! You can now log in with DEVELOPER / PASSWORD' });
+    // Step 3: Seed 30 Dummy Documents for the Dashboard
+    const entryUser = await prisma.$queryRawUnsafe(`SELECT id FROM "User" WHERE "username" = 'entry1' LIMIT 1`);
+    const checkUser = await prisma.$queryRawUnsafe(`SELECT id FROM "User" WHERE "username" = 'check1' LIMIT 1`);
+    const verifyUser = await prisma.$queryRawUnsafe(`SELECT id FROM "User" WHERE "username" = 'verify1' LIMIT 1`);
+
+    if (entryUser.length > 0) {
+      const entryId = entryUser[0].id;
+      const checkId = checkUser[0].id;
+      const verifyId = verifyUser[0].id;
+
+      // Clear old dummy data first
+      await prisma.$executeRawUnsafe(`DELETE FROM "Document"`);
+
+      const types = ['Packing Shift Report', 'Laminate Record for GSM Verification', 'First Piece Approval', 'Daily Quality Check'];
+      const sheds = ['SHED NO 1', 'SHED NO 2', 'SHED NO 3'];
+      const items = ['ADDITIVE', 'INK', 'Makeup', 'Laminate', 'Solvent'];
+      const statuses = ['Completed', 'Pending at Checked By', 'Pending at Verified By'];
+
+      for (let i = 0; i < 30; i++) {
+        const type = types[i % 4];
+        const shed = sheds[i % 3];
+        const item = items[i % 5];
+        const status = statuses[i % 3];
+        const daysAgo = i % 15;
+        const dateStr = new Date(Date.now() - daysAgo * 86400000).toISOString();
+        const data = JSON.stringify({
+          batchNumber: `BTCH-2026-${100 + i}`,
+          quantity: 1000 + (i * 50),
+          remarks: 'Standard production run. All parameters verified.',
+          temperature: '24°C',
+          humidity: '45%'
+        });
+
+        const checkedById = status !== 'Pending at Checked By' ? checkId : null;
+        const checkedAt = status !== 'Pending at Checked By' ? dateStr : null;
+        const verifiedById = status === 'Completed' ? verifyId : null;
+        const verifiedAt = status === 'Completed' ? dateStr : null;
+
+        await prisma.$executeRawUnsafe(
+          `INSERT INTO "Document" ("type", "data", "status", "location", "itemName", "createdById", "checkedById", "checkedAt", "verifiedById", "verifiedAt", "createdAt", "updatedAt") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          type, data, status, shed, item, entryId, checkedById, checkedAt, verifiedById, verifiedAt, dateStr, dateStr
+        );
+      }
+    }
+
+    res.json({ message: '✅ Tables created, 10 users seeded, and 30 demo documents generated! You can now log in with DEVELOPER / PASSWORD' });
   } catch (error) {
     res.status(500).json({ error: error.message, stack: error.stack });
   }
