@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const { execSync } = require('child_process');
 const authRoutes = require('./routes/auth');
 const documentRoutes = require('./routes/documents');
 const adminRoutes = require('./routes/admin');
@@ -12,6 +13,15 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// Bulletproof Table Creation on Startup
+try {
+  console.log('Synchronizing database schema...');
+  execSync('npx prisma db push --accept-data-loss', { stdio: 'inherit' });
+  console.log('Database schema synchronized successfully.');
+} catch (error) {
+  console.error('Database synchronization failed:', error.message);
+}
 
 app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
