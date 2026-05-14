@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  username       String    @unique
+  passwordHash   String
+  name           String
+  role           String    // "DataEntry", "Checker", "Verifier", "Admin"
+  location       String?   // Assigned location like "SHED NO 1"
+  plainPassword  String?   // Added per user request to view passwords
+  documentsCreated Document[] @relation("DocumentCreator")
+  documentsChecked Document[] @relation("DocumentChecker")
+  documentsVerified Document[] @relation("DocumentVerifier")
+  workflowLogs   DocumentWorkflowLog[]
+}
+
+model Document {
+  id             Int       @id @default(autoincrement())
+  type           String    // e.g. "First Piece Approval", "Shift Report"
+  data           String    // JSON string for dynamic fields
+  status         String    // "Pending at Checked By", "Pending at Verified By", "Completed"
+  location       String
+  itemName       String
+  
+  createdById    Int
+  createdBy      User      @relation("DocumentCreator", fields: [createdById], references: [id])
+  
+  checkedById    Int?
+  checkedBy      User?     @relation("DocumentChecker", fields: [checkedById], references: [id])
+  checkedAt      DateTime?
+  
+  verifiedById   Int?
+  verifiedBy     User?     @relation("DocumentVerifier", fields: [verifiedById], references: [id])
+  verifiedAt     DateTime?
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  logs           DocumentWorkflowLog[]
+}
+
+model DocumentWorkflowLog {
+  id             Int       @id @default(autoincrement())
+  documentId     Int
+  document       Document  @relation(fields: [documentId], references: [id])
+  action         String    // "Created", "Checked", "Verified"
+  userId         Int
+  user           User      @relation(fields: [userId], references: [id])
+  timestamp      DateTime  @default(now())
+}
