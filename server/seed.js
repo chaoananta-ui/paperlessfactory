@@ -4,85 +4,87 @@ const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
 
 async function main() {
-  // Seed users
+  console.log('Starting production seed...');
+
+  // 1. Seed Core Users
   const users = [
-    { username: 'dataentry1', password: 'password', role: 'DataEntry', name: 'John Doe' },
-    { username: 'checker1', password: 'password', role: 'Checker', name: 'Jane Smith' },
-    { username: 'verifier1', password: 'password', role: 'Verifier', name: 'Boss Man' }
+    { username: 'DEVELOPER', password: 'PASSWORD', role: 'Verifier', name: 'Super Admin', plainPassword: 'PASSWORD' },
+    { username: 'entry1', password: 'password', role: 'DataEntry', name: 'Shed 1 Operator', plainPassword: 'password' },
+    { username: 'check1', password: 'password', role: 'Checker', name: 'Shed 1 Quality Lead', plainPassword: 'password' },
+    { username: 'verify1', password: 'password', role: 'Verifier', name: 'Factory Manager', plainPassword: 'password' },
+    { username: 'entry2', password: 'password', role: 'DataEntry', name: 'Shed 2 Operator', plainPassword: 'password' },
+    { username: 'check2', password: 'password', role: 'Checker', name: 'Shed 2 Quality Lead', plainPassword: 'password' },
+    { username: 'entry3', password: 'password', role: 'DataEntry', name: 'Shed 3 Operator', plainPassword: 'password' },
   ];
 
   for (const u of users) {
     const hash = await bcrypt.hash(u.password, 10);
     await prisma.user.upsert({
       where: { username: u.username },
-      update: {},
-      create: { username: u.username, passwordHash: hash, role: u.role, name: u.name }
+      update: { passwordHash: hash, plainPassword: u.plainPassword },
+      create: { 
+        username: u.username, 
+        passwordHash: hash, 
+        role: u.role, 
+        name: u.name,
+        plainPassword: u.plainPassword
+      }
     });
   }
 
-  const dataEntryUser = await prisma.user.findUnique({ where: { username: 'dataentry1' } });
-  const checkerUser = await prisma.user.findUnique({ where: { username: 'checker1' } });
-  const verifierUser = await prisma.user.findUnique({ where: { username: 'verifier1' } });
+  const devUser = await prisma.user.findUnique({ where: { username: 'DEVELOPER' } });
+  const entry1 = await prisma.user.findUnique({ where: { username: 'entry1' } });
+  const check1 = await prisma.user.findUnique({ where: { username: 'check1' } });
+  const verify1 = await prisma.user.findUnique({ where: { username: 'verify1' } });
 
-  // Demo documents in various states
-  const demoDocuments = [
-    {
-      type: 'First Piece Approval',
-      data: JSON.stringify({ notes: 'Initial batch run for Component A', quantity: '50' }),
-      status: 'Pending at Checked By',
-      location: 'SHED NO 1',
-      itemName: 'ADDITIVE',
-      createdById: dataEntryUser.id,
-    },
-    {
-      type: 'Shift Report',
-      data: JSON.stringify({ notes: 'Morning shift report - all parameters normal', quantity: '120' }),
-      status: 'Pending at Checked By',
-      location: 'SHED NO 2',
-      itemName: 'INK',
-      createdById: dataEntryUser.id,
-    },
-    {
-      type: 'Training Attendance Sheet',
-      data: JSON.stringify({ notes: 'Safety training batch 3', quantity: '25' }),
-      status: 'Pending at Verified By',
-      location: 'SHED NO 3',
-      itemName: 'Makeup',
-      createdById: dataEntryUser.id,
-      checkedById: checkerUser.id,
-      checkedAt: new Date('2026-05-12T10:30:00Z'),
-    },
-    {
-      type: 'Daily Quality Check',
-      data: JSON.stringify({ notes: 'All QC parameters passed', quantity: '200' }),
-      status: 'Completed',
-      location: 'SHED NO 1',
-      itemName: 'ADDITIVE',
-      createdById: dataEntryUser.id,
-      checkedById: checkerUser.id,
-      checkedAt: new Date('2026-05-11T09:00:00Z'),
-      verifiedById: verifierUser.id,
-      verifiedAt: new Date('2026-05-11T14:00:00Z'),
-    },
-    {
-      type: 'First Piece Approval',
-      data: JSON.stringify({ notes: 'New product line validation', quantity: '10' }),
-      status: 'Completed',
-      location: 'SHED NO 2',
-      itemName: 'INK',
-      createdById: dataEntryUser.id,
-      checkedById: checkerUser.id,
-      checkedAt: new Date('2026-05-10T11:00:00Z'),
-      verifiedById: verifierUser.id,
-      verifiedAt: new Date('2026-05-10T16:00:00Z'),
-    },
-  ];
+  // 2. Generate 25+ High-Quality Demo Documents
+  const sheds = ['SHED NO 1', 'SHED NO 2', 'SHED NO 3'];
+  const items = ['ADDITIVE', 'INK', 'Makeup', 'Laminate', 'Solvent'];
+  const types = ['Packing Shift Report', 'Laminate Record for GSM Verification', 'First Piece Approval', 'Daily Quality Check'];
+  const statuses = ['Completed', 'Pending at Checked By', 'Pending at Verified By'];
 
-  for (const doc of demoDocuments) {
-    await prisma.document.create({ data: doc });
+  console.log('Generating 30 professional records...');
+  
+  for (let i = 0; i < 30; i++) {
+    const shed = sheds[i % 3];
+    const item = items[i % 5];
+    const type = types[i % 4];
+    const status = statuses[i % 3];
+    
+    const date = new Date();
+    date.setDate(date.getDate() - (i % 15)); // Spread over last 15 days
+
+    await prisma.document.create({
+      data: {
+        type: type,
+        location: shed,
+        itemName: item,
+        status: status,
+        data: JSON.stringify({ 
+          batchNumber: `BTCH-${2026}-${100 + i}`,
+          quantity: 1000 + (i * 50),
+          remarks: 'Standard production run. All parameters verified.',
+          temperature: '24°C',
+          humidity: '45%'
+        }),
+        createdAt: date,
+        createdById: entry1.id,
+        checkedById: status !== 'Pending at Checked By' ? check1.id : null,
+        checkedAt: status !== 'Pending at Checked By' ? date : null,
+        verifiedById: status === 'Completed' ? verify1.id : null,
+        verifiedAt: status === 'Completed' ? date : null,
+      }
+    });
   }
 
-  console.log('Seed complete! Created 3 users and 5 demo documents.');
+  console.log('✅ Seed complete! Admin account DEVELOPER/PASSWORD is ready.');
 }
 
-main().catch(console.error).finally(() => prisma.$disconnect());
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
