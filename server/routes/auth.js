@@ -7,8 +7,8 @@ const router = express.Router();
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
-// Dummy route to seed users
-router.post('/seed', async (req, res) => {
+// Easy route to seed users via browser
+router.get('/seed', async (req, res) => {
   const users = [
     { username: 'entry1', password: 'password', role: 'DataEntry', name: 'Shed 1 Entry', location: 'SHED NO 1' },
     { username: 'check1', password: 'password', role: 'Checker', name: 'Shed 1 Checker', location: 'SHED NO 1' },
