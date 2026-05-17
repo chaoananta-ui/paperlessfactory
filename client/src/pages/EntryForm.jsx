@@ -187,14 +187,14 @@ export default function EntryForm() {
         {/* ===== Document Header ===== */}
         <div className="border-b border-slate-200">
           <div className="grid grid-cols-12 border-b border-slate-200">
-            <div className="col-span-8 px-6 py-3 space-y-1">
+            <div className="col-span-12 md:col-span-8 px-6 py-4 space-y-1">
               <h2 className="text-lg font-extrabold text-slate-900 tracking-tight">GOGOI PRIVATE LIMITED</h2>
               <h3 className="text-sm font-bold text-indigo-700 uppercase">{config.title}</h3>
               {config.formatNo && (
                 <div className="text-xs text-slate-500">Format No.: <span className="font-semibold text-slate-700">{config.formatNo}</span></div>
               )}
             </div>
-            <div className="col-span-4 px-4 py-3 bg-slate-50 border-l border-slate-200 text-xs space-y-1">
+            <div className="col-span-12 md:col-span-4 px-6 py-4 bg-slate-50 border-t md:border-t-0 md:border-l border-slate-200 text-xs space-y-1">
               {config.issueRevNo && (
                 <div className="flex justify-between">
                   <span className="text-slate-500">Issue/Rev. No.</span>
@@ -215,14 +215,14 @@ export default function EntryForm() {
           </div>
 
           {isLaminateGSM ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-200">
+            <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 divide-x-0 md:divide-x divide-slate-200 border-b border-slate-200">
               <HeaderField label="Date" name="date" type="date" value={headerData.date} onChange={handleHeaderChange} onKeyDown={preventEnterSubmit} />
               <HeaderField label="Shift" name="shift" value={headerData.shift} onChange={handleHeaderChange} placeholder="e.g. A / B / C" onKeyDown={preventEnterSubmit} />
               <HeaderField label="SKU" name="sku" value={headerData.sku} onChange={handleHeaderChange} placeholder="Enter SKU" onKeyDown={preventEnterSubmit} />
               <HeaderField label="Rewinder No." name="rewinderNo" value={headerData.rewinderNo} onChange={handleHeaderChange} placeholder="e.g. RW-01" onKeyDown={preventEnterSubmit} />
             </div>
           ) : (
-            <div className="grid grid-cols-2 divide-x divide-slate-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 divide-x-0 md:divide-x divide-slate-200 border-b border-slate-200">
               <HeaderField label="Location" name="location" value={headerData.location} onChange={handleHeaderChange} isSelect
                 disabled={user.role !== 'Admin'}
                 options={['SHED NO 1', 'SHED NO 2', 'SHED NO 3']} onKeyDown={preventEnterSubmit} />

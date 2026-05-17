@@ -139,12 +139,12 @@ export default function ShiftReportForm() {
         {/* Document Header */}
         <div className="border-b border-slate-200">
           <div className="grid grid-cols-12 border-b border-slate-200">
-            <div className="col-span-8 px-6 py-3 space-y-1">
+            <div className="col-span-12 md:col-span-8 px-6 py-4 space-y-1">
               <h2 className="text-lg font-extrabold text-slate-900">GOGOI PRIVATE LIMITED</h2>
               <h3 className="text-sm font-bold text-indigo-700 uppercase">PACKING SHIFT REPORT (SANKO MACHINE)</h3>
               <div className="text-xs text-slate-500">Format No.:</div>
             </div>
-            <div className="col-span-4 px-4 py-3 bg-slate-50 border-l border-slate-200 text-xs space-y-1">
+            <div className="col-span-12 md:col-span-4 px-6 py-4 bg-slate-50 border-t md:border-t-0 md:border-l border-slate-200 text-xs space-y-1">
               <div className="flex justify-between"><span className="text-slate-500">Issue/Rev. No.</span><span className="font-bold text-slate-800">01/00</span></div>
               <div className="flex justify-between"><span className="text-slate-500">Effective Date</span><span className="font-bold text-slate-800">01.01.2025</span></div>
               <div className="flex justify-between"><span className="text-slate-500">Page No.</span><span className="font-bold text-slate-800">1 of 1</span></div>
@@ -180,8 +180,8 @@ export default function ShiftReportForm() {
           </div>
 
           {/* Header Fields */}
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-200">
-            <div className="px-4 py-3">
+          <div className="grid grid-cols-2 lg:grid-cols-5 border-t border-slate-200 bg-white">
+            <div className="px-4 py-3 border-b border-r border-slate-200 lg:border-b-0">
               <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Location</label>
               <select 
                 name="location" 
@@ -196,22 +196,22 @@ export default function ShiftReportForm() {
                 <option>SHED NO 1</option><option>SHED NO 2</option><option>SHED NO 3</option>
               </select>
             </div>
-            <div className="px-4 py-3">
+            <div className="px-4 py-3 border-b border-slate-200 lg:border-b-0 lg:border-r">
               <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Date</label>
               <input type="date" name="date" value={header.date} onChange={handleHeaderChange} onKeyDown={preventEnter}
                 className="w-full px-3 py-1.5 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-indigo-500" />
             </div>
-            <div className="px-4 py-3">
+            <div className="px-4 py-3 border-b border-r border-slate-200 lg:border-b-0">
               <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Shift</label>
               <input type="text" name="shift" value={header.shift} onChange={handleHeaderChange} onKeyDown={preventEnter}
                 placeholder="e.g. A / B / C" className="w-full px-3 py-1.5 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-indigo-500" />
             </div>
-            <div className="px-4 py-3">
+            <div className="px-4 py-3 border-b border-slate-200 lg:border-b-0 lg:border-r">
               <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Shift Incharge</label>
               <input type="text" name="shiftIncharge" value={header.shiftIncharge} onChange={handleHeaderChange} onKeyDown={preventEnter}
                 placeholder="Name" className="w-full px-3 py-1.5 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-indigo-500" />
             </div>
-            <div className="px-4 py-3 bg-amber-50/50">
+            <div className="col-span-2 lg:col-span-1 px-4 py-3 bg-amber-50/50">
               <label className="block text-xs font-semibold text-amber-700 uppercase mb-1 font-bold">Variety / SKU Name</label>
               <input type="text" name="varietySKU" value={header.varietySKU} onChange={handleHeaderChange} onKeyDown={preventEnter}
                 placeholder="e.g. Product Name" className="w-full px-3 py-1.5 border border-amber-300 rounded text-sm focus:ring-2 focus:ring-amber-500 font-bold" />
