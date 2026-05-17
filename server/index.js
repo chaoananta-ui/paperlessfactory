@@ -27,6 +27,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/admin', adminRoutes);
 
+app.get('/', (req, res) => {
+  res.send('<h1>🏭 Paperless Factory Backend API is Online & Running!</h1><p>Visit the Netlify URL to access the Frontend Portal.</p><p>Health Check: <a href="/api/health">/api/health</a></p>');
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
