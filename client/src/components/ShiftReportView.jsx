@@ -1,8 +1,11 @@
 import React from 'react';
 import { format, isValid, parseISO } from 'date-fns';
 
-export default function ShiftReportView({ data, header, selectedMachines, SHIFT_ROWS, docStatus }) {
-  // docStatus should have { checkedBy, checkedAt, verifiedBy, verifiedAt }
+export default function ShiftReportView({ data, header, selectedMachines, SHIFT_ROWS = [], docStatus }) {
+  const safeData = data || {};
+  const safeHeader = header || {};
+  const safeMachines = selectedMachines && selectedMachines.length > 0 ? selectedMachines : ['M/C 1', 'M/C 2', 'M/C 3'];
+  const safeStatus = docStatus || {};
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '—';
@@ -20,7 +23,7 @@ export default function ShiftReportView({ data, header, selectedMachines, SHIFT_
     <div className="bg-white p-6 text-slate-900 font-sans border border-slate-300 shadow-sm mx-auto relative overflow-hidden" style={{ width: '100%', maxWidth: '1100px' }}>
       
       {/* Optional: PENDING Watermark if not fully verified */}
-      {(!docStatus?.verifiedBy) && (
+      {(!safeStatus?.verifiedBy) && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-45 text-slate-100 text-9xl font-black select-none pointer-events-none opacity-50 z-0">
           PENDING
         </div>
@@ -56,10 +59,10 @@ export default function ShiftReportView({ data, header, selectedMachines, SHIFT_
 
         {/* Sub Header */}
         <div className="border-x-2 border-b-2 border-slate-900 p-2 text-sm font-bold grid grid-cols-2 gap-y-1">
-          <div>Date:- {formatDate(header?.date)}</div>
-          <div>Shift:- {header?.shift || '—'}</div>
-          <div>Shift Incharge:- {header?.shiftIncharge || '—'}</div>
-          <div className="text-indigo-700">Variety / SKU:- {header?.varietySKU || '—'}</div>
+          <div>Date:- {formatDate(safeHeader?.date)}</div>
+          <div>Shift:- {safeHeader?.shift || '—'}</div>
+          <div>Shift Incharge:- {safeHeader?.shiftIncharge || '—'}</div>
+          <div className="text-indigo-700">Variety / SKU:- {safeHeader?.varietySKU || '—'}</div>
         </div>
 
         {/* Main Table */}
@@ -68,7 +71,7 @@ export default function ShiftReportView({ data, header, selectedMachines, SHIFT_
             <tr className="bg-slate-50">
               <th className="border-2 border-slate-900 p-2 text-center font-bold w-[28%]">Varity:-</th>
               <th className="border-2 border-slate-900 p-2 text-center font-bold w-[10%]">UOM</th>
-              {selectedMachines?.map(m => (
+              {safeMachines.map(m => (
                 <th key={m} className="border-2 border-slate-900 p-2 text-center font-bold">{m}</th>
               ))}
               <th className="border-2 border-slate-900 p-2 text-center font-bold w-[18%]">Remarks</th>
@@ -83,19 +86,19 @@ export default function ShiftReportView({ data, header, selectedMachines, SHIFT_
               const isDynamicBreakdown = row.section === 'breakdown_dynamic';
               
               if (isDynamicBreakdown) {
-                return selectedMachines?.map((m, idx) => (
+                return safeMachines.map((m, idx) => (
                   <tr key={`${row.key}_${m}`} className="h-10">
                     {idx === 0 && (
-                      <td rowSpan={selectedMachines.length} className="border-2 border-slate-900 px-3 py-1 font-bold text-center align-middle bg-slate-50">
+                      <td rowSpan={safeMachines.length} className="border-2 border-slate-900 px-3 py-1 font-bold text-center align-middle bg-slate-50">
                         Machine Breakdown(Min) with reason
                       </td>
                     )}
-                        <td className="border-2 border-slate-900 px-1 py-1 text-center font-bold text-indigo-700 bg-indigo-50/30">
-                          {m}
-                        </td>
-                        <td colSpan={selectedMachines.length + 1} className="border-2 border-slate-900 px-3 py-1 italic font-medium whitespace-pre-wrap break-words">
-                          {data[`${row.key}_${m}`] || '—'}
-                        </td>
+                    <td className="border-2 border-slate-900 px-1 py-1 text-center font-bold text-indigo-700 bg-indigo-50/30">
+                      {m}
+                    </td>
+                    <td colSpan={safeMachines.length + 1} className="border-2 border-slate-900 px-3 py-1 italic font-medium whitespace-pre-wrap break-words">
+                      {safeData[`${row.key}_${m}`] || '—'}
+                    </td>
                   </tr>
                 ));
               }
@@ -105,18 +108,18 @@ export default function ShiftReportView({ data, header, selectedMachines, SHIFT_
                   <td className="border-2 border-slate-900 px-3 py-1 font-bold whitespace-pre-wrap">{row.label}</td>
                   <td className="border-2 border-slate-900 px-1 py-1 text-center font-bold">{row.uom}</td>
                   {(isManpower || isMerged) ? (
-                    <td colSpan={selectedMachines?.length} className="border-2 border-slate-900 px-2 py-1 text-center font-bold bg-slate-50/50 italic">
-                      {data[`${row.key}_common`] || '—'}
+                    <td colSpan={safeMachines.length} className="border-2 border-slate-900 px-2 py-1 text-center font-bold bg-slate-50/50 italic">
+                      {safeData[`${row.key}_common`] || '—'}
                     </td>
                   ) : (
-                    selectedMachines?.map(m => (
+                    safeMachines.map(m => (
                       <td key={m} className="border-2 border-slate-900 px-1 py-1 text-center">
-                        {data[`${row.key}_${m}`] || '—'}
+                        {safeData[`${row.key}_${m}`] || '—'}
                       </td>
                     ))
                   )}
                   <td className="border-2 border-slate-900 px-2 py-1">
-                    {data[`${row.key}_remarks`] || ''}
+                    {safeData[`${row.key}_remarks`] || ''}
                   </td>
                 </tr>
               );
@@ -128,8 +131,8 @@ export default function ShiftReportView({ data, header, selectedMachines, SHIFT_
         <div className="mt-12 flex justify-between px-10">
           <div className="text-center min-w-[220px]">
             <div className="text-xs italic mb-1 h-4">
-              {docStatus?.checkedBy ? (
-                <span className="text-green-700 font-bold">Digitally Signed by {docStatus.checkedBy.name} on {formatDateTime(docStatus.checkedAt)}</span>
+              {safeStatus?.checkedBy ? (
+                <span className="text-green-700 font-bold">Digitally Signed by {safeStatus.checkedBy.name} on {formatDateTime(safeStatus.checkedAt)}</span>
               ) : (
                 <span className="text-slate-400 font-medium tracking-widest">[PENDING CHECKED BY]</span>
               )}
@@ -140,8 +143,8 @@ export default function ShiftReportView({ data, header, selectedMachines, SHIFT_
           
           <div className="text-center min-w-[220px]">
             <div className="text-xs italic mb-1 h-4">
-              {docStatus?.verifiedBy ? (
-                <span className="text-green-700 font-bold">Digitally Verified by {docStatus.verifiedBy.name} on {formatDateTime(docStatus.verifiedAt)}</span>
+              {safeStatus?.verifiedBy ? (
+                <span className="text-green-700 font-bold">Digitally Verified by {safeStatus.verifiedBy.name} on {formatDateTime(safeStatus.verifiedAt)}</span>
               ) : (
                 <span className="text-slate-400 font-medium tracking-widest">[PENDING VERIFIED BY]</span>
               )}

@@ -14,7 +14,11 @@ const COLUMNS = [
   { key: 'remarks', label: 'REMARKS' },
 ];
 
-export default function LaminateGSMView({ data = [], header = {}, docStatus = {} }) {
+export default function LaminateGSMView({ data, header, docStatus }) {
+  const safeData = data || [];
+  const safeHeader = header || {};
+  const safeStatus = docStatus || {};
+
   const safeFormatDate = (dateStr) => {
     if (!dateStr) return '—';
     const date = parseISO(dateStr);
@@ -55,10 +59,10 @@ export default function LaminateGSMView({ data = [], header = {}, docStatus = {}
 
       {/* Sub-header */}
       <div className="grid grid-cols-4 border-b border-slate-300 bg-slate-50 font-bold uppercase text-[10px]">
-        <div className="p-2 border-r border-slate-200">Date: {safeFormatDate(header.date)}</div>
-        <div className="p-2 border-r border-slate-200">Shift: {header.shift || '—'}</div>
-        <div className="p-2 border-r border-slate-200">SKU: {header.sku || '—'}</div>
-        <div className="p-2">Rewinder No: {header.rewinderNo || '—'}</div>
+        <div className="p-2 border-r border-slate-200">Date: {safeFormatDate(safeHeader.date)}</div>
+        <div className="p-2 border-r border-slate-200">Shift: {safeHeader.shift || '—'}</div>
+        <div className="p-2 border-r border-slate-200">SKU: {safeHeader.sku || '—'}</div>
+        <div className="p-2">Rewinder No: {safeHeader.rewinderNo || '—'}</div>
       </div>
 
       {/* Main Data Table */}
@@ -72,11 +76,11 @@ export default function LaminateGSMView({ data = [], header = {}, docStatus = {}
           </tr>
         </thead>
         <tbody>
-          {data.length > 0 ? data.map((row, idx) => (
+          {safeData.length > 0 ? safeData.map((row, idx) => (
             <tr key={idx} className="text-center hover:bg-slate-50">
               <td className="p-2 border border-slate-200 font-bold text-slate-400">{idx + 1}</td>
               {COLUMNS.map(col => (
-                <td key={col.key} className="p-2 border border-slate-200">{row[col.key] || '—'}</td>
+                <td key={col.key} className="p-2 border border-slate-200">{(row && row[col.key]) || '—'}</td>
               ))}
             </tr>
           )) : (
@@ -91,10 +95,10 @@ export default function LaminateGSMView({ data = [], header = {}, docStatus = {}
       <div className="p-6 grid grid-cols-2 gap-20 mt-4">
         <div className="space-y-2">
           <div className="border-t border-slate-400 pt-1 text-center font-bold">Signature ( Production Shift Incharge)</div>
-          {docStatus.checkedBy ? (
+          {safeStatus.checkedBy ? (
             <div className="text-center bg-green-50 rounded p-2 border border-green-200">
-              <div className="text-green-700 font-bold italic">Digitally Signed by {docStatus.checkedBy.name}</div>
-              <div className="text-[9px] text-green-600">{safeFormatTime(docStatus.checkedAt)}</div>
+              <div className="text-green-700 font-bold italic">Digitally Signed by {safeStatus.checkedBy.name}</div>
+              <div className="text-[9px] text-green-600">{safeFormatTime(safeStatus.checkedAt)}</div>
             </div>
           ) : (
             <div className="text-center text-slate-300 italic">Pending Authorization</div>
@@ -102,10 +106,10 @@ export default function LaminateGSMView({ data = [], header = {}, docStatus = {}
         </div>
         <div className="space-y-2">
           <div className="border-t border-slate-400 pt-1 text-center font-bold">Signature ( Quality Control)</div>
-          {docStatus.verifiedBy ? (
+          {safeStatus.verifiedBy ? (
             <div className="text-center bg-blue-50 rounded p-2 border border-blue-200">
-              <div className="text-blue-700 font-bold italic">Digitally Verified by {docStatus.verifiedBy.name}</div>
-              <div className="text-[9px] text-blue-600">{safeFormatTime(docStatus.verifiedAt)}</div>
+              <div className="text-blue-700 font-bold italic">Digitally Verified by {safeStatus.verifiedBy.name}</div>
+              <div className="text-[9px] text-blue-600">{safeFormatTime(safeStatus.verifiedAt)}</div>
             </div>
           ) : (
             <div className="text-center text-slate-300 italic">Pending Verification</div>
