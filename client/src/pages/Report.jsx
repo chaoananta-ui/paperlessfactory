@@ -372,7 +372,7 @@ export default function Report() {
                 )}
               </div>
               <div className="flex gap-3">
-                {user.role?.toLowerCase() === 'admin' && (
+                {(user.role?.toLowerCase() === 'admin' || user.username?.toLowerCase() === 'developer') && (
                   <button 
                     onClick={async () => {
                       if (!confirm('Are you sure you want to PERMANENTLY delete this document and all its logs?')) return;

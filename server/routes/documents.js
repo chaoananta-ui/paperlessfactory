@@ -125,9 +125,9 @@ router.put('/:id/status', authenticate, async (req, res) => {
   }
 });
 
-// Delete a document (Admin only)
+// Delete a document (Admin or DEVELOPER only)
 router.delete('/:id', authenticate, async (req, res) => {
-  if (req.user.role !== 'Admin') return res.status(403).json({ error: 'Access denied: Admin only' });
+  if (req.user.role !== 'Admin' && req.user.username !== 'DEVELOPER') return res.status(403).json({ error: 'Access denied: Admin or DEVELOPER only' });
   
   const { id } = req.params;
   try {
