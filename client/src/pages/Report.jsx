@@ -87,7 +87,22 @@ export default function Report() {
   };
 
   const parseData = (dataStr) => {
-    try { return JSON.parse(dataStr); } catch { return {}; }
+    try { 
+      const parsed = JSON.parse(dataStr);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch { 
+      return {}; 
+    }
+  };
+
+  const safeFormatDate = (dateStr, formatStr = 'dd MMM yyyy, hh:mm a') => {
+    if (!dateStr) return '—';
+    try {
+      const d = new Date(dateStr);
+      return isNaN(d.getTime()) ? '—' : format(d, formatStr);
+    } catch {
+      return '—';
+    }
   };
 
   const clearFilters = () => {
@@ -244,7 +259,7 @@ export default function Report() {
                 <InfoCard icon={<MapPin className="w-3 h-3" />} label="Location" value={selectedDoc.location} />
                 <InfoCard icon={<Package className="w-3 h-3" />} label="Item Name" value={selectedDoc.itemName} />
                 <InfoCard icon={<UserIcon className="w-3 h-3" />} label="Submitted By" value={selectedDoc.createdBy?.name} />
-                <InfoCard icon={<Clock className="w-3 h-3" />} label="Submitted On" value={format(new Date(selectedDoc.createdAt), 'dd MMM yyyy, hh:mm a')} />
+                <InfoCard icon={<Clock className="w-3 h-3" />} label="Submitted On" value={safeFormatDate(selectedDoc.createdAt)} />
               </div>
               <div>
                 <h3 className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider mb-3">
@@ -296,7 +311,7 @@ export default function Report() {
                     <div className="text-xs font-bold text-green-700 uppercase tracking-wider mb-1">Checked</div>
                     <div className="text-sm text-green-900">
                       <span className="font-semibold">{selectedDoc.checkedBy.name}</span>
-                      {selectedDoc.checkedAt && <span> — {format(new Date(selectedDoc.checkedAt), 'dd MMM yyyy, hh:mm a')}</span>}
+                      {selectedDoc.checkedAt && <span> — {safeFormatDate(selectedDoc.checkedAt)}</span>}
                     </div>
                   </div>
                 )}
@@ -305,7 +320,7 @@ export default function Report() {
                     <div className="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">Verified</div>
                     <div className="text-sm text-emerald-900">
                       <span className="font-semibold">{selectedDoc.verifiedBy.name}</span>
-                      {selectedDoc.verifiedAt && <span> — {format(new Date(selectedDoc.verifiedAt), 'dd MMM yyyy, hh:mm a')}</span>}
+                      {selectedDoc.verifiedAt && <span> — {safeFormatDate(selectedDoc.verifiedAt)}</span>}
                     </div>
                   </div>
                 )}

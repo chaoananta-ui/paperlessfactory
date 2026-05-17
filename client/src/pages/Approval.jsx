@@ -67,7 +67,22 @@ export default function Approval() {
   };
 
   const parseData = (dataStr) => {
-    try { return JSON.parse(dataStr); } catch { return {}; }
+    try { 
+      const parsed = JSON.parse(dataStr);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch { 
+      return {}; 
+    }
+  };
+
+  const safeFormatDate = (dateStr, formatStr = 'dd MMM yyyy, hh:mm a') => {
+    if (!dateStr) return '—';
+    try {
+      const d = new Date(dateStr);
+      return isNaN(d.getTime()) ? '—' : format(d, formatStr);
+    } catch {
+      return '—';
+    }
   };
 
   if (loading) return <div className="p-8 text-center text-slate-500 animate-pulse">Loading queue...</div>;
@@ -200,7 +215,7 @@ export default function Approval() {
                   <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase mb-1">
                     <Clock className="w-3 h-3" /> Submitted On
                   </div>
-                  <div className="text-sm font-bold text-slate-900">{format(new Date(selectedDoc.createdAt), 'dd MMM yyyy, hh:mm a')}</div>
+                  <div className="text-sm font-bold text-slate-900">{safeFormatDate(selectedDoc.createdAt)}</div>
                 </div>
               </div>
 
@@ -259,7 +274,7 @@ export default function Approval() {
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <h3 className="text-xs font-bold text-green-700 uppercase tracking-wider mb-2">Checker Signature</h3>
                   <div className="text-sm text-green-900">
-                    <span className="font-semibold">{selectedDoc.checkedBy.name}</span> — Checked on {selectedDoc.checkedAt ? format(new Date(selectedDoc.checkedAt), 'dd MMM yyyy, hh:mm a') : 'N/A'}
+                    <span className="font-semibold">{selectedDoc.checkedBy.name}</span> — Checked on {safeFormatDate(selectedDoc.checkedAt)}
                   </div>
                 </div>
               )}
