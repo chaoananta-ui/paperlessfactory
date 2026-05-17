@@ -9,6 +9,13 @@ const adminRoutes = require('./routes/admin');
 
 dotenv.config();
 
+// Programmatic Override: Intercept and redirect IPv6 connection string to IPv4 pooler
+if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('db.xzppnfbxwjofrwteftka.supabase.co')) {
+  console.log('🔄 [System Startup] Redirecting database connection to working IPv4 pooler (aws-1-ap-northeast-1.pooler.supabase.com:6543)...');
+  process.env.DATABASE_URL = "postgresql://postgres.xzppnfbxwjofrwteftka:*Gogoi262682%23@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=4";
+}
+
+
 const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
