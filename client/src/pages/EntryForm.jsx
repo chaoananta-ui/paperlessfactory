@@ -269,7 +269,7 @@ export default function EntryForm() {
               </div>
 
               <div className="overflow-x-auto border border-slate-200 rounded-lg" ref={tableRef}>
-                <table className="min-w-full text-sm">
+                <table className="min-w-[1300px] text-sm">
                   <thead>
                     <tr className="bg-slate-700 text-white">
                       <th className="px-2 py-2.5 text-xs font-semibold text-center border-r border-slate-600 w-10">#</th>

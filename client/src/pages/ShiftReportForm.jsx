@@ -234,7 +234,7 @@ export default function ShiftReportForm() {
               <div className="text-sm mt-1">Select at least one machine above to start entering data.</div>
             </div>
           ) : (
-            <table className="min-w-full text-sm border-collapse">
+            <table className="min-w-[900px] text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-700 text-white">
                   <th className="px-3 py-2.5 text-xs font-semibold text-left border-r border-slate-600 w-[280px]">Variety</th>
