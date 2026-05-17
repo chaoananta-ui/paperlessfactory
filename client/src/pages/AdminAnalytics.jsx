@@ -243,16 +243,16 @@ export default function AdminAnalytics() {
       
       {/* Top Control Bar */}
       <div className="flex flex-col lg:flex-row justify-between gap-4 items-start lg:items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex bg-slate-100 rounded-lg p-1">
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <div className="flex bg-slate-100 rounded-lg p-1 overflow-x-auto scrollbar-none whitespace-nowrap flex-nowrap max-w-full">
             {['day', 'week', 'month', 'quarter', 'year'].map(t => (
-              <button key={t} onClick={() => setTimeframe(t)} className={clsx("px-4 py-1.5 text-xs font-bold rounded-md capitalize transition-all", timeframe === t ? "bg-white text-indigo-700 shadow-sm" : "text-slate-500 hover:text-slate-800")}>
+              <button key={t} onClick={() => setTimeframe(t)} className={clsx("px-4 py-1.5 text-xs font-bold rounded-md capitalize transition-all flex-shrink-0", timeframe === t ? "bg-white text-indigo-700 shadow-sm" : "text-slate-500 hover:text-slate-800")}>
                 {t}
               </button>
             ))}
           </div>
           <div className="h-6 w-px bg-slate-200 mx-2 hidden sm:block"></div>
-          <select value={dateRange} onChange={e => setDateRange(e.target.value)} className="text-sm font-bold border border-slate-200 rounded-lg px-3 py-1.5 bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none">
+          <select value={dateRange} onChange={e => setDateRange(e.target.value)} className="text-sm font-bold border border-slate-200 rounded-lg px-3 py-1.5 bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none w-full sm:w-auto">
             <option value="7d">Last 7 Days</option>
             <option value="30d">Last 30 Days</option>
             <option value="90d">Last 90 Days</option>

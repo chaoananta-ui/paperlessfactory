@@ -266,13 +266,13 @@ export default function AdminPanel() {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-1 bg-slate-200/50 p-1 rounded-xl w-fit">
+      <div className="flex space-x-1 bg-slate-200/50 p-1 rounded-xl w-full overflow-x-auto scrollbar-none whitespace-nowrap flex-nowrap">
         {['users', 'audit', 'analytics', 'settings'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={clsx(
-              "px-5 py-2.5 rounded-lg font-bold text-sm transition-all capitalize",
+              "px-5 py-2.5 rounded-lg font-bold text-sm transition-all capitalize flex-shrink-0",
               activeTab === tab 
                 ? "bg-white text-indigo-700 shadow-sm" 
                 : "text-slate-600 hover:bg-slate-200/50"
